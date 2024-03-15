@@ -1,0 +1,137 @@
+﻿@model To_Do_List.Models.TodoIndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CreateModal">
+        Create New Todo
+    </button>
+</p>
+
+@foreach (var item in Model.Todoes)
+{
+    <div class="card text-dark bg-light mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>@Html.DisplayFor(modelItem => item.ActivitiesNo)</h5>
+            <div class="btn-group-sm" role="group" aria-label="Basic example">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Markings</button>
+                <ul class="dropdown-menu">
+                    <li><a asp-action="Edit_Todo" asp-route-stats="Done" asp-route-id=@item.Id class="dropdown-item">Done</a></li>
+                    <li><a asp-action="Edit_Todo" asp-route-stats="Canceled" asp-route-id=@item.Id class="dropdown-item">Canceled</a></li>
+                    <li><a asp-action="Edit_Todo" asp-route-stats="Unmark" asp-route-id=@item.Id class="dropdown-item">Unmark</a></li>
+                </ul>
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">options</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" onclick="edit_add_id(@item.Id)" data-bs-toggle="modal" data-bs-target="#EditModal">Edit</a></li>
+                    <li><a class="dropdown-item" onclick="delete_add_id(@item.Id)" data-bs-toggle="modal" data-bs-target="#DeleteModal">Detele</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 id="subj@(item.Id)" class="card-title">@Html.DisplayFor(modelItem => item.Subject)</h5>
+            <p id="desc@(item.Id)" class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+        </div>
+    </div>
+}
+
+<!-- Modal Edit-->
+<div class="modal fade" id="EditModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="Edit_Todo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Todo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <input type="hidden" asp-for="Todo.Id" id="edit_id" />
+                        <label for="Subject" class="col-sm-3 col-form-label">Subject</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Todo.Subject" type="text" id="edit_subj" class="form-control" id="subject">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="Description" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea asp-for="Todo.Description" class="form-control" id="edit_desc" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Create-->
+<div class="modal fade" id="CreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="Create_Todo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Todo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <label for="Subject" class="col-sm-3 col-form-label">Subject</label>
+                        <div class="col-sm-9">
+                            <input asp-for="Todo.Subject" type="text" class="form-control" id="subject">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="Description" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea asp-for="Todo.Description" class="form-control" id="Description" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Delete-->
+<div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="Delete_Todo">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Todo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="Todo.Id" id="delete_id" />
+                    <p>Are You Sure want to delete this?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function edit_add_id(Id) {
+  document.getElementById("edit_id").value = Id;
+  var subj = "subj"+Id;
+  var desc = "desc"+Id;
+  document.getElementById("edit_subj").value = subj;
+  document.getElementById("edit_desc").value = document.getElementById(desc).innerText;
+}
+function delete_add_id(Id) {
+  document.getElementById("delete_id").value = Id;
+}
+</script>
